@@ -1,0 +1,121 @@
+@inject IJSRuntime JSRuntime
+
+<div class="netzero-topbar">
+    <div class="topbar-left">
+        <div class="inverter-info">
+            <div class="inverter-label">Connected Inverter(s)</div>
+            <div class="inverter-value">
+                <span class="inverter-brand">Huawei</span>
+                <span class="inverter-count">x 14</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <button class="devices-meta-btn" @onclick="OnDevicesMetaClick">
+            🔧 Devices & Meta
+        </button>
+
+        <div class="theme-switch">
+            <button class="theme-btn @(IsDark ? "active" : "")" @onclick="() => OnThemeToggle(true)">
+                🌙 Dark
+            </button>
+            <button class="theme-btn @(!IsDark ? "active" : "")" @onclick="() => OnThemeToggle(false)">
+                ☀️ Light
+            </button>
+        </div>
+
+        <div class="language-switch">
+            <i class="fas fa-globe"></i>
+            <select @onchange="OnLanguageChange">
+                <option value="en">EN</option>
+                <option value="vi">VI</option>
+            </select>
+        </div>
+
+        <div class="user-info" @onclick="ToggleUserDropdown">
+            <div class="user-avatar">HM</div>
+            <span class="user-name">Huynh Minh Khoi</span>
+            <i class="fas fa-chevron-down"></i>
+            
+            @if (showUserDropdown)
+            {
+                <div class="user-dropdown">
+                    <button class="dropdown-item" @onclick="OnProfileClick">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </button>
+                    <button class="dropdown-item" @onclick="OnSettingsClick">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </button>
+                    <button class="dropdown-item" @onclick="OnLogoutClick">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsDark { get; set; } = true;
+    [Parameter] public EventCallback OnToggleTheme { get; set; }
+    [Parameter] public EventCallback<bool> OnThemeChanged { get; set; }
+    [Parameter] public EventCallback OnToggleSidebar { get; set; }
+
+    private bool showUserDropdown = false;
+
+    private async Task OnThemeToggle(bool isDark)
+    {
+        IsDark = isDark;
+
+        // Call JavaScript directly to ensure theme changes
+        await JSRuntime.InvokeVoidAsync("setTheme", isDark);
+
+        // Also notify parent components
+        await OnThemeChanged.InvokeAsync(isDark);
+        await OnToggleTheme.InvokeAsync();
+
+        StateHasChanged();
+
+        // Debug logging
+        await JSRuntime.InvokeVoidAsync("console.log", $"Theme changed to: {(isDark ? "Dark" : "Light")}");
+    }
+
+    private async Task OnDevicesMetaClick()
+    {
+        // Handle devices & meta button click
+        await JSRuntime.InvokeVoidAsync("console.log", "Devices & Meta clicked");
+    }
+
+    private async Task OnLanguageChange(ChangeEventArgs e)
+    {
+        var language = e.Value?.ToString();
+        await JSRuntime.InvokeVoidAsync("console.log", $"Language changed to: {language}");
+    }
+
+    private void ToggleUserDropdown()
+    {
+        showUserDropdown = !showUserDropdown;
+    }
+
+    private async Task OnProfileClick()
+    {
+        showUserDropdown = false;
+        await JSRuntime.InvokeVoidAsync("console.log", "Profile clicked");
+    }
+
+    private async Task OnSettingsClick()
+    {
+        showUserDropdown = false;
+        await JSRuntime.InvokeVoidAsync("console.log", "Settings clicked");
+    }
+
+    private async Task OnLogoutClick()
+    {
+        showUserDropdown = false;
+        await JSRuntime.InvokeVoidAsync("console.log", "Logout clicked");
+    }
+}

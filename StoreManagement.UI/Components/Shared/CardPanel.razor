@@ -1,0 +1,60 @@
+<div class="card-panel">
+    <div class="card-header">
+        @if (!string.IsNullOrEmpty(Title))
+        {
+            <h3 class="card-title">@Title</h3>
+        }
+        @if (!string.IsNullOrEmpty(Subtitle))
+        {
+            <p class="card-subtitle">@Subtitle</p>
+        }
+    </div>
+    <div class="card-content">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
+
+<style>
+    .card-panel {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        transition: all 0.3s ease;
+    }
+
+    .card-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px var(--shadow);
+    }
+
+    .card-header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 8px 0;
+    }
+
+    .card-subtitle {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .card-content {
+        color: var(--text-primary);
+    }
+</style>

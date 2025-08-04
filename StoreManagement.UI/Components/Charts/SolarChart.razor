@@ -1,0 +1,121 @@
+@inject IJSRuntime JSRuntime
+
+<div class="solar-chart-container">
+    <div class="chart-header">
+        <h3 class="chart-title">@Title</h3>
+        @if (!string.IsNullOrEmpty(Subtitle))
+        {
+            <p class="chart-subtitle">@Subtitle</p>
+        }
+    </div>
+    <div class="chart-canvas-wrapper">
+        <canvas id="@CanvasId" width="400" height="200"></canvas>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Solar Chart";
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public string CanvasId { get; set; } = $"solar-chart-{Guid.NewGuid():N}";
+    [Parameter] public Dictionary<string, double>? Data { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CreateChart();
+        }
+    }
+
+    private async Task CreateChart()
+    {
+        var chartData = new
+        {
+            labels = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun" },
+            datasets = new[]
+            {
+                new
+                {
+                    label = "Solar Generation (kWh)",
+                    data = new[] { 120, 190, 300, 500, 200, 300 },
+                    borderColor = "rgb(0, 212, 170)",
+                    backgroundColor = "rgba(0, 212, 170, 0.1)",
+                    tension = 0.4
+                }
+            }
+        };
+
+        var config = new
+        {
+            type = "line",
+            data = chartData,
+            options = new
+            {
+                responsive = true,
+                plugins = new
+                {
+                    legend = new
+                    {
+                        position = "top"
+                    }
+                },
+                scales = new
+                {
+                    y = new
+                    {
+                        beginAtZero = true
+                    }
+                }
+            }
+        };
+
+        await JSRuntime.InvokeVoidAsync("chartHelper.createChart", CanvasId, config);
+    }
+
+    public async Task UpdateChart()
+    {
+        await CreateChart();
+    }
+
+    public async Task UpdateChart(Dictionary<string, double> primaryData, Dictionary<string, double> secondaryData)
+    {
+        await CreateChart();
+    }
+
+    public async Task UpdateChart(Dictionary<string, double> data)
+    {
+        await CreateChart();
+    }
+}
+
+<style>
+    .solar-chart-container {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .chart-header {
+        margin-bottom: 20px;
+    }
+
+    .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 8px 0;
+    }
+
+    .chart-subtitle {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .chart-canvas-wrapper {
+        position: relative;
+        height: 300px;
+    }
+</style>

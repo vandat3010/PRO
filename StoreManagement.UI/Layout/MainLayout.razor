@@ -1,0 +1,66 @@
+@inherits LayoutComponentBase
+@inject IJSRuntime JS
+@inject ThemeService ThemeService
+@using StoreManagement.UI.Components.Shared
+@using StoreManagement.UI.Services
+@implements IDisposable
+
+<!-- NetZero OS Layout -->
+<div class="netzero-layout">
+    <!-- Sidebar -->
+    <SidebarNav IsCollapsed="@isSidebarCollapsed" />
+
+    <!-- Main content area -->
+    <div class="main-content @(isSidebarCollapsed ? "sidebar-collapsed" : "")">
+        <!-- Top Bar -->
+        <TopBar IsDark="@ThemeService.IsDarkMode"
+                OnToggleTheme="@(async () => await ToggleTheme())"
+                OnThemeChanged="@(async (v) => await HandleThemeChanged(v))"
+                OnToggleSidebar="@(async () => ToggleSidebar())" />
+
+        <!-- Page Content -->
+        <div class="page-content">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isSidebarCollapsed = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ThemeService.InitializeAsync();
+            ThemeService.ThemeChanged += OnThemeChanged;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ToggleTheme()
+    {
+        await ThemeService.ToggleThemeAsync();
+    }
+
+    private async Task HandleThemeChanged(bool isDark)
+    {
+        await ThemeService.SetThemeAsync(isDark);
+        StateHasChanged();
+    }
+
+    private void ToggleSidebar()
+    {
+        isSidebarCollapsed = !isSidebarCollapsed;
+    }
+
+    private void OnThemeChanged(bool isDark)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+}
