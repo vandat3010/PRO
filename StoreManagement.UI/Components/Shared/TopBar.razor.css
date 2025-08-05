@@ -1,21 +1,49 @@
 ﻿.netzero-topbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
     background: var(--secondary-bg);
-    padding: 12px 24px;
+    padding: 0;
     color: var(--text-primary);
     position: sticky;
     top: 0;
-    z-index: 999;
-    min-height: 64px;
+    z-index: 2100;
+    height: 70px;
     border-bottom: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
 
 .topbar-left {
     display: flex;
+    align-items: stretch;
+    height: 100%;
+}
+/* Logo trong topbar nằm sát trái, cao bằng topbar */
+.netzero-topbar .logo {
+    display: flex;
     align-items: center;
+    height: 100%;
+    padding: 0 24px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-color) !important;
+    text-decoration: none;
+    gap: 8px;
+    margin-right: 20px;
+}
+.netzero-topbar .logo-text {
+    color: var(--accent-color) !important;
+}
+@media (max-width: 900px) {
+    .netzero-topbar {
+        height: 56px;
+    }
+    .netzero-topbar .logo {
+        font-size: 18px;
+        padding: 0 8px;
+        margin-right: 12px;
+        height: 100%;
+    }
 }
 
 .topbar-right {

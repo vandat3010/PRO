@@ -2,13 +2,16 @@
 
 <div class="netzero-topbar">
     <div class="topbar-left">
-        <div class="inverter-info">
+        <a class="logo" href="/">
+            <span class="logo-text">NetZero</span>
+        </a>
+        <!-- <div class="inverter-info">
             <div class="inverter-label">Connected Inverter(s)</div>
             <div class="inverter-value">
                 <span class="inverter-brand">Huawei</span>
                 <span class="inverter-count">x 14</span>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="topbar-right">
@@ -18,18 +21,18 @@
 
         <div class="theme-switch">
             <button class="theme-btn @(IsDark ? "active" : "")" @onclick="() => OnThemeToggle(true)">
-                🌙 Dark
+                Light
             </button>
             <button class="theme-btn @(!IsDark ? "active" : "")" @onclick="() => OnThemeToggle(false)">
-                ☀️ Light
+                Dark
             </button>
         </div>
 
         <div class="language-switch">
             <i class="fas fa-globe"></i>
             <select @onchange="OnLanguageChange">
-                <option value="en">EN</option>
                 <option value="vi">VI</option>
+                <option value="en">EN</option>
             </select>
         </div>
 
